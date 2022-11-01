@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -50,15 +52,35 @@ public class UserController {
     public ResponseEntity<?> saveUser(@RequestBody User user){
         URI uri= URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().
                 path("/api/user/register").toUriString());
-        userService.saveUser(user);
-        return ResponseEntity.created(uri).body("Created successfully !");
+
+        final Pattern VALID_EMAIL_ADDRESS_REGEX =
+                Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail());
+
+        if (matcher.find()){
+            userService.saveUser(user);
+            return ResponseEntity.created(uri).body("Created successfully !");
+        }else{
+            return ResponseEntity.created(uri).body("Invalid email.");
+        }
     }
 
     @PutMapping("/user/update/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable ("userId") Long userId,
                                         @RequestBody User user){
-        userService.updateUser(userId, user);
-        return ResponseEntity.ok().body("Updated successfully !");
+        final Pattern VALID_EMAIL_ADDRESS_REGEX =
+                Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail());
+
+        if (matcher.find()){
+            userService.updateUser(userId, user);
+            return ResponseEntity.ok().body("Updated successfully !");
+        }else{
+            return ResponseEntity.ok().body("Invalid email.");
+        }
+
     }
 
     @DeleteMapping("/user/delete/{userId}")
@@ -66,6 +88,8 @@ public class UserController {
         userService.deleteUser(userId);
         return ResponseEntity.ok().body("Deleted successfully !");
     }
+
+
 
     @PostMapping("/role/save")
     public ResponseEntity<Role> saveRole(@RequestBody Role role){

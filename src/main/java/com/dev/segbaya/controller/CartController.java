@@ -1,9 +1,6 @@
 package com.dev.segbaya.controller;
 
-import com.dev.segbaya.domain.Book;
-import com.dev.segbaya.domain.Cart;
-import com.dev.segbaya.domain.Role;
-import com.dev.segbaya.domain.User;
+import com.dev.segbaya.domain.*;
 import com.dev.segbaya.service.CartService;
 import com.dev.segbaya.service.UserService;
 import lombok.AllArgsConstructor;
@@ -32,12 +29,24 @@ public class CartController {
     @PostMapping("/book/add-to-cart")
     public ResponseEntity<?> addBookToCart(@RequestBody BookToCartForm form){
         cartService.addBookToCart(form.getIdBook(), form.getIdCart(), form.getQuantity());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body("Added successfully");
     }
 
     @GetMapping("/cart/all")
     public ResponseEntity<List<Cart>> getCarts(){
         return ResponseEntity.ok().body(cartService.getCarts());
+    }
+
+    @GetMapping("/cart-books/all")
+    public ResponseEntity<List<CartBook>> getCartBooks(){
+        return ResponseEntity.ok().body(cartService.getCartBooks());
+    }
+
+    @DeleteMapping("/cart-books/delete/{bookId}/{cartId}")
+    public ResponseEntity<?> removeBookFromCart(@PathVariable ("bookId") Long bookId,
+                                                @PathVariable ("cartId") Long cartId){
+        cartService.removeBookFromCart(bookId, cartId );
+        return ResponseEntity.ok().body("Removed successfully");
     }
 }
 

@@ -23,3 +23,17 @@ spring:
       max-file-size: 2000KB
       max-request-size: 2000KB
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+paypal:
+  mode: sandbox
+  client:
+    id: Ad9JjD7eF1-R5YqH_0BIZjAKZtTyzCPFi6RkDqcjqfV7AJ8aj_7Xs-cuyjbasLB1r0ErLyfrJ-H2bZqZ
+    secret: EFs985bTVOGQ6bsF8Ac6zl9_ryb69Rutmge16IxZbjoqnuBKJ7Imdr1zrMJfg0xrg1E4ZPfaTaKrV6dT
+
+
+

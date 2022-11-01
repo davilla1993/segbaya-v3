@@ -17,11 +17,35 @@ public interface BookService {
                   Double price,
                   Long idCategory,
                   MultipartFile fileNumeric,
-                  MultipartFile fileAudio);
+                  MultipartFile fileAudio,
+                  MultipartFile fileVideo,
+                  MultipartFile fileImage1,
+                  MultipartFile fileImage2,
+                  MultipartFile fileImage3,
+                  MultipartFile fileImage4);
+
+    Book updateBook(Long idBook,
+                    String title,
+                  String author,
+                  String description,
+                  Double price,
+                  Long idCategory,
+                  MultipartFile fileNumeric,
+                  MultipartFile fileAudio,
+                  MultipartFile fileVideo);
+
+
+
     Category saveCategory(Category category);
+
+    Category updateCategory(Long id, Category category);
+
     Resource load(String fileName);
+
     void addCategoryToBook(Long idBook, Long idCategory);
+
     List<Book> getBooks();
+
     Book getBook(Long id);
 
     public Stream<Path> loadAll();
@@ -29,4 +53,6 @@ public interface BookService {
     List<Category> getCategories();
 
     void deleteBook(Long id);
+
+    void deleteCategory(Long idCategory);
 }

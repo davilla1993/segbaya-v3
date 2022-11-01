@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -76,6 +77,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void saveUser(User user) {
         Optional<User> userOptional = userRepo.
                 findByEmail(user.getEmail());
+
         if (userOptional.isPresent()){
             throw new IllegalStateException("email "+ user.getEmail() + " taken");
         }

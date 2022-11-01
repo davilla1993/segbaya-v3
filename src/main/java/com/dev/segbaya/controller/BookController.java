@@ -30,6 +30,11 @@ public class BookController {
     @PostMapping("/book/upload")
     public ResponseEntity<ResponseMessage> uploadBook(@RequestParam MultipartFile fileNumeric,
                                                       @RequestParam MultipartFile fileAudio,
+                                                      @RequestParam MultipartFile fileVideo,
+                                                      @RequestParam MultipartFile fileImage1,
+                                                      @RequestParam MultipartFile fileImage2,
+                                                      @RequestParam MultipartFile fileImage3,
+                                                      @RequestParam MultipartFile fileImage4,
                                                       @RequestParam String title,
                                                       @RequestParam String author,
                                                       @RequestParam String description,
@@ -37,14 +42,38 @@ public class BookController {
                                                       @RequestParam Long idCategory) {
         String message = "";
         try {
-            bookService.saveBook(title, author, description, price, idCategory, fileNumeric, fileAudio);
-            message = "Files are uploaded successfully !";
+            bookService.saveBook(title, author, description, price, idCategory, fileNumeric, fileAudio, fileVideo,
+                    fileImage1, fileImage2, fileImage3, fileImage4);
+            message = "Books are uploaded successfully !";
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
-            message = "Could not upload the files !" ;
+            message = "Could not upload the books !\n"+e.getMessage() ;
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
     }
+
+    @PutMapping("/book/update/{bookId}")
+    public ResponseEntity<ResponseMessage> updateBook(@PathVariable Long bookId,
+                                                      @RequestParam MultipartFile fileNumeric,
+                                                      @RequestParam MultipartFile fileAudio,
+                                                      @RequestParam MultipartFile fileVideo,
+                                                      @RequestParam String title,
+                                                      @RequestParam String author,
+                                                      @RequestParam String description,
+                                                      @RequestParam Double price,
+                                                      @RequestParam Long idCategory) {
+        String message = "";
+        try {
+            bookService.updateBook(bookId, title, author, description, price, idCategory, fileNumeric, fileAudio, fileVideo);
+            message = "Books are uploaded successfully !";
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        } catch (Exception e) {
+            message = "Could not upload the books !" ;
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+        }
+    }
+
+
 
     @GetMapping("/books")
     public ResponseEntity<Stream<Path>> getListBooks() {
@@ -79,6 +108,12 @@ public class BookController {
         return ResponseEntity.ok().body("Deleted successfully !");
     }
 
+    @DeleteMapping("/category/delete/{categoryId}")
+    public ResponseEntity<?> deleteCategory(@PathVariable ("categoryId") Long categoryId){
+        bookService.deleteCategory(categoryId);
+        return ResponseEntity.ok().body("Deleted successfully !");
+    }
+
     @GetMapping("/book/all")
     public ResponseEntity<List<Book>> getBooks(){
         return ResponseEntity.ok().body(bookService.getBooks());
@@ -89,6 +124,12 @@ public class BookController {
         URI uri= URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().
                 path("/api/category/save").toUriString());
         return ResponseEntity.created(uri).body(bookService.saveCategory(category));
+    }
+
+    @PutMapping("/category/update/{categoryId}")
+    public ResponseEntity<?> saveCategory(@PathVariable Long categoryId, @RequestBody Category category){
+        bookService.updateCategory(categoryId, category);
+        return ResponseEntity.ok().body("Updated successfully !");
     }
 
     @GetMapping("/category/all")

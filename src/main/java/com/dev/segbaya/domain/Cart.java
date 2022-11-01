@@ -1,5 +1,6 @@
 package com.dev.segbaya.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -12,8 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cart {
@@ -21,17 +21,21 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idCart;
     private LocalDateTime dateCreated;
-//    @ManyToOne
-//    @JoinColumn
-//    private User user;
+    @ManyToOne
+    @JoinColumn
+    private User user;
 
     @OneToOne(mappedBy = "cart")
     private Order order;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany
-    private Collection<Book> books = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "cart")
-//    private Set<CartBook> cartBooks;
+//    @LazyCollection(LazyCollectionOption.FALSE)
+//    @ManyToMany
+//    private Collection<Book> books = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "cart")
+    @JsonIgnore
+    private Collection<CartBook> cartBooks;
+
 }

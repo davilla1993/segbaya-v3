@@ -39,9 +39,9 @@ public class SegbayaApplication {
 			userService.saveRole(new Role(null, "ROLE_USER"));
 			userService.saveRole(new Role(null, "ROLE_ADMIN"));
 //
-			userService.saveUser(new User(null, "John", "Doe", "john@gmail.com","1234", "", new ArrayList<>(), null));
+			userService.saveUser(new User(null, "John", "Doe", "john@gmail.com","1234", "", new ArrayList<>(), null, null, null));
 //			userService.saveUser(new User(null, "Will", "Smith", "will@gmail.com","1234", "", new ArrayList<>(),null));
-			userService.saveUser(new User(null, "Abalo", "Koffi", "koffi@gmail.com","1234", "", new ArrayList<>(),null));
+			userService.saveUser(new User(null, "Abalo", "Koffi", "koffi@gmail.com","1234", "", new ArrayList<>(),null, null, null));
 //			userService.saveUser(new User(null, "Nas", "Das", "nas@gmail.com","1234", "", new ArrayList<>(),null));
 
 //			userService.addRoleToUser("john@gmail.com", "ROLE_USER");

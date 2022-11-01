@@ -2,10 +2,10 @@ package com.dev.segbaya.service.implementation;
 
 import com.dev.segbaya.domain.Book;
 import com.dev.segbaya.domain.Cart;
-import com.dev.segbaya.domain.CartBooky;
+import com.dev.segbaya.domain.CartBook;
 import com.dev.segbaya.repo.BookRepo;
+import com.dev.segbaya.repo.CartBookRepo;
 import com.dev.segbaya.repo.CartRepo;
-import com.dev.segbaya.repo.UserRepo;
 import com.dev.segbaya.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,7 @@ public class CartServiceImpl implements CartService {
 
     private final CartRepo cartRepo;
     private final BookRepo bookRepo;
+    private final CartBookRepo cartBookRepo;
 
     @Override
     public void createCart(Cart cart) {
@@ -34,6 +35,7 @@ public class CartServiceImpl implements CartService {
         cartRepo.save(cart);
     }
 
+    @Transactional
     @Override
     public void addBookToCart(Long idBook, Long idCart, int quantity) {
         Book book = bookRepo.findById(idBook).orElseThrow(
@@ -48,20 +50,39 @@ public class CartServiceImpl implements CartService {
                 )
         );
 
-//        CartBook cartBook = new CartBook();
-//        cartBook.setBook(book);
-//        cartBook.setCart(cart);
-//        cartBook.setQuantity(quantity);
-//        cartBook.setSellingPrice(book.getPrice()*quantity);
+        CartBook cartBook = new CartBook();
+        cartBook.setBook(book);
+        cartBook.setCart(cart);
+        cartBook.setQuantity(quantity);
+        cartBook.setSellingPrice(book.getPrice()*quantity);
+//        cart.getBooks().add(book);
+        cartBookRepo.save(cartBook);
 
-        cart.getBooks().add(book);
+    }
 
-//        cartRepo.save(cart);
+    @Override
+    public void removeBookFromCart(Long idBook, Long idCart) {
+        Book book = bookRepo.findById(idBook).orElseThrow(
+                (() -> new IllegalStateException(
+                        "Book with id "+ idBook + " does not exist")
+                )
+        );
 
+        Cart cart = cartRepo.findById(idCart).orElseThrow(
+                (() -> new IllegalStateException(
+                        "Cart with id "+ idCart + " does not exist")
+                )
+        );
+        cartBookRepo.removeBook(idBook, idCart);
     }
 
     @Override
     public List<Cart> getCarts() {
         return cartRepo.findAll();
+    }
+
+    @Override
+    public List<CartBook> getCartBooks() {
+        return cartBookRepo.findAll();
     }
 }
