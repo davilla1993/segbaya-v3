@@ -188,7 +188,6 @@ public class BookServiceImpl implements BookService {
         if (categoryOptional.isPresent()) {
             throw new IllegalStateException("Category "+ category.getName() + " already add");
         }
-
         return categoryRepo.save(category);
     }
 

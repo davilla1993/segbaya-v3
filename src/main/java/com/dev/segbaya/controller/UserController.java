@@ -58,9 +58,19 @@ public class UserController {
 
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(user.getEmail());
 
+        final Pattern VALID_PASSWORD_ADDRESS_REGEX =
+                Pattern.compile("^[a-zA-Z0-9]{6,12}$", Pattern.CASE_INSENSITIVE);
+
+        Matcher matcher2 = VALID_PASSWORD_ADDRESS_REGEX.matcher(user.getPassword());
+
         if (matcher.find()){
-            userService.saveUser(user);
-            return ResponseEntity.created(uri).body("Created successfully !");
+            if (matcher2.find()){
+                userService.saveUser(user);
+                return ResponseEntity.created(uri).body("Created successfully !");
+            }
+            else {
+                return ResponseEntity.created(uri).body("Password must contain between 6 and 12 characters.");
+            }
         }else{
             return ResponseEntity.created(uri).body("Invalid email.");
         }

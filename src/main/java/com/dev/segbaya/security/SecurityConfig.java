@@ -44,8 +44,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/book/all/**",
                         "/api/publish-house/all/**",
                         "/api-docs/**",
-                        "/swagger-ui.html",
-                        "/swagger-ui/index.html")
+                        "/configuration/ui",
+                        "/configuration/security",
+                        "/swagger.json",
+                        "/swagger-resources/**",
+                        "/swagger-ui/**")
                 .permitAll();
         http.authorizeRequests().antMatchers("/api/user/**").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().antMatchers("/api/cart/**").hasAnyAuthority("ROLE_USER");
