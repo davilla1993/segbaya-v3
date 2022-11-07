@@ -1,4 +1,4 @@
-package com.dev.segbaya.filter;
+package com.dev.segbaya.exception.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -18,6 +18,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Date;
@@ -40,7 +41,20 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
 
-        String reader = request.getReader().readLine() + "";
+        String reader = request.getReader().readLine();
+
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader2 = request.getReader();
+        try {
+            String line;
+            while ((line = reader2.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+        } finally {
+            reader2.close();
+        }
+        System.out.println("Here "+reader);
+
         String[] credentials = reader.split(" ");
         String username = credentials[0];
         String password = credentials[1];

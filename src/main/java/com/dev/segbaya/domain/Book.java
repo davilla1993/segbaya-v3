@@ -69,7 +69,6 @@ public class Book {
     @LastModifiedBy
     private Date updatedAt;
 
-
     public Book(String title) {
         this.title = title;
     }

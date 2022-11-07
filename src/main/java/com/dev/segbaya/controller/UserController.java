@@ -9,6 +9,9 @@ import com.dev.segbaya.domain.User;
 import com.dev.segbaya.repo.RoleRepo;
 import com.dev.segbaya.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,12 @@ public class UserController {
 
     private final UserService userService;
     private final RoleRepo roleRepo;
+
+    @Operation(description = "")
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Parameter(description = "email password") @RequestBody String s){
+        return ResponseEntity.ok("");
+    }
 
 
     @GetMapping("/user/find/{userId}")

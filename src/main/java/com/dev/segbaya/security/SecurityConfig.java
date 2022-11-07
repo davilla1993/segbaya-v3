@@ -1,7 +1,7 @@
 package com.dev.segbaya.security;
 
-import com.dev.segbaya.filter.CustomAuthenticationFilter;
-import com.dev.segbaya.filter.CustomAuthorizationFilter;
+import com.dev.segbaya.exception.filter.CustomAuthenticationFilter;
+import com.dev.segbaya.exception.filter.CustomAuthorizationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
 @AllArgsConstructor
@@ -48,7 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/configuration/security",
                         "/swagger.json",
                         "/swagger-resources/**",
-                        "/swagger-ui/**")
+                        "/swagger-ui/**",
+                        "/swagger-ui.html")
                 .permitAll();
         http.authorizeRequests().antMatchers("/api/user/**").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().antMatchers("/api/cart/**").hasAnyAuthority("ROLE_USER");

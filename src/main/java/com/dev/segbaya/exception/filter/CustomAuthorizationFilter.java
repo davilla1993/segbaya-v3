@@ -1,4 +1,4 @@
-package com.dev.segbaya.filter;
+package com.dev.segbaya.exception.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
