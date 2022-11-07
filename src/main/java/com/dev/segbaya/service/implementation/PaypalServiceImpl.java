@@ -21,7 +21,10 @@ public class PaypalServiceImpl implements PaypalService {
     private APIContext apiContext;
 
     @Override
-    public Payment createPayment(Double total, String currency, String method, String intent,  String description, String cancelUrl, String successUrl) throws PayPalRESTException {
+    public Payment createPayment(Double total, String currency, String method,
+                                 String intent, String description, String cancelUrl,
+                                 String successUrl) throws PayPalRESTException {
+
         Map<String, Object> response = new HashMap<>();
         Amount amount = new Amount();
         amount.setCurrency(currency);
