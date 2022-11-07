@@ -32,7 +32,12 @@ public class User {
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private Set<Book> books;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<Order> orders;
+
 
     @CreatedDate
     private Instant createdAt;

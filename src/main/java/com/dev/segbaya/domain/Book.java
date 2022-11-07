@@ -43,12 +43,21 @@ public class Book {
     private String description;
     private String size;
     private Double price;
+    private Boolean isPublished;
     @ManyToOne
     @JoinColumn(name = "idCategory")
     private Category category;
 
     private LocalDateTime publishDate;
 //    private LocalDateTime lastUpdate;
+
+    @ManyToOne
+    @JoinColumn(name = "idPublishHouse")
+    private PublishHouse publishHouse;
+
+    @ManyToOne
+    @JoinColumn(name = "idUser")
+    private User user;
 
     @OneToMany(mappedBy = "book")
     @JsonIgnore
