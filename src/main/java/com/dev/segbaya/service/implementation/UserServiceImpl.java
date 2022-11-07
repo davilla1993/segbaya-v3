@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 findByEmail(user.getEmail());
 
         if (userOptional.isPresent()){
-            throw new IllegalStateException("email "+ user.getEmail() + " taken");
+            throw new IllegalStateException("email "+ user.getEmail() + "already taken");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
