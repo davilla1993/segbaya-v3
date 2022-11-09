@@ -32,7 +32,13 @@ public interface BookService {
                   Long idCategory,
                   MultipartFile fileNumeric,
                   MultipartFile fileAudio,
-                  MultipartFile fileVideo);
+                  MultipartFile fileVideo,
+                  MultipartFile fileImage1,
+                  MultipartFile fileImage2,
+                  MultipartFile fileImage3,
+                  MultipartFile fileImage4);
+
+
 
 
 

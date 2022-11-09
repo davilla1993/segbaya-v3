@@ -126,6 +126,7 @@ public class BookServiceImpl implements BookService {
             book.setAuthor(author);
             book.setDescription(description);
             book.setPrice(price);
+            book.setIsPublished(false);
             book.setSize((fileNumeric.getSize() / 1000) + " Ko");
             book.setPublishDate(LocalDateTime.now());
 
@@ -136,43 +137,94 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book updateBook(Long idBook, String title, String author, String description, Double price, Long idCategory, MultipartFile fileNumeric, MultipartFile fileAudio, MultipartFile fileVideo) {
+    public Book updateBook(Long idBook, String title, String author, String description, Double price, Long idCategory,
+                           MultipartFile fileNumeric, MultipartFile fileAudio, MultipartFile fileVideo,
+                           MultipartFile fileImage1, MultipartFile fileImage2, MultipartFile fileImage3, MultipartFile fileImage4) {
         Book book = bookRepo.findById(idBook).orElseThrow((() -> new IllegalStateException(
                 "Book with id " + idBook + "does not exist")
         ));
 
         try {
-            String extNumeric = FilenameUtils.getExtension(fileNumeric.getOriginalFilename());
-            String extAudio = FilenameUtils.getExtension(fileAudio.getOriginalFilename());
-            String extVideo = FilenameUtils.getExtension(fileVideo.getOriginalFilename());
-            String fileNumericName = UUID.randomUUID().toString() + "." + extNumeric;
-            String fileAudioName = UUID.randomUUID().toString() + "." + extAudio;
-            String fileVideoName = UUID.randomUUID().toString() + "." + extVideo;
 
-            book.setTitle(title);
-            book.setFileNumericName(fileNumericName);
-            book.setFileAudioName(fileAudioName);
-            book.setFileVideoName(fileVideoName);
+            String fileNumericName = null;
+            String fileAudioName = null;
+            String fileVideoName = null;
+            String fileImage1Name = null;
+            String fileImage2Name = null;
+            String fileImage3Name = null;
+            String fileImage4Name = null;
+
+            if (!fileNumeric.isEmpty()) {
+                fileNumericName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(fileNumeric.getOriginalFilename());
+                book.setUrlNumeric(MvcUriComponentsBuilder
+                        .fromMethodName(BookController.class, "getFile", fileNumericName.toString()).build().toString());
+                Files.copy(fileNumeric.getInputStream(), this.root.resolve(fileNumericName));
+            }
+
+
+            if (!fileAudio.isEmpty()) {
+                fileAudioName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(fileAudio.getOriginalFilename());
+                book.setUrlAudio(MvcUriComponentsBuilder
+                        .fromMethodName(BookController.class, "getFile", fileAudioName.toString()).build().toString());
+                Files.copy(fileAudio.getInputStream(), this.root.resolve(fileAudioName));
+            }
+
+            if (!fileVideo.isEmpty()) {
+                fileVideoName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(fileVideo.getOriginalFilename());
+                book.setUrlVideo(MvcUriComponentsBuilder
+                        .fromMethodName(BookController.class, "getFile", fileVideoName.toString()).build().toString());
+                Files.copy(fileVideo.getInputStream(), this.root.resolve(fileVideoName));
+            }
+
+            if (!fileImage1.isEmpty()) {
+                fileImage1Name = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(fileImage1.getOriginalFilename());
+                book.setUrlImage1(MvcUriComponentsBuilder
+                        .fromMethodName(BookController.class, "getFile", fileImage1Name.toString()).build().toString());
+                Files.copy(fileImage1.getInputStream(), this.root.resolve(fileImage1Name));
+            }
+
+            if (!fileImage2.isEmpty()) {
+                fileImage2Name = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(fileImage2.getOriginalFilename());
+                book.setUrlImage2(MvcUriComponentsBuilder
+                        .fromMethodName(BookController.class, "getFile", fileImage2Name.toString()).build().toString());
+                Files.copy(fileImage2.getInputStream(), this.root.resolve(fileImage2Name));
+            }
+
+            if (!fileImage3.isEmpty()) {
+                fileImage3Name = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(fileImage3.getOriginalFilename());
+                book.setUrlImage3(MvcUriComponentsBuilder
+                        .fromMethodName(BookController.class, "getFile", fileImage3Name.toString()).build().toString());
+                Files.copy(fileImage3.getInputStream(), this.root.resolve(fileImage3Name));
+            }
+
+            if (!fileImage4.isEmpty()) {
+                fileImage4Name = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(fileImage4.getOriginalFilename());
+                book.setUrlImage4(MvcUriComponentsBuilder
+                        .fromMethodName(BookController.class, "getFile", fileImage4Name.toString()).build().toString());
+                Files.copy(fileImage4.getInputStream(), this.root.resolve(fileImage4Name));
+            }
 
             Category category = categoryRepo.findById(idCategory).orElseThrow((() -> new IllegalStateException(
                     "Category with id " + idCategory + "does not exist")
             ));
             book.setCategory(category);
 
-            book.setUrlNumeric(MvcUriComponentsBuilder
-                    .fromMethodName(BookController.class, "getFile", fileNumericName.toString()).build().toString());
-            book.setUrlAudio(MvcUriComponentsBuilder
-                    .fromMethodName(BookController.class, "getFile", fileAudioName.toString()).build().toString());
-            book.setUrlVideo(MvcUriComponentsBuilder
-                    .fromMethodName(BookController.class, "getFile", fileVideoName.toString()).build().toString());
+            book.setFileNumericName(fileNumericName);
+            book.setFileAudioName(fileAudioName);
+            book.setFileVideoName(fileVideoName);
+            book.setFileImage1(fileImage1Name);
+            book.setFileImage2(fileImage2Name);
+            book.setFileImage3(fileImage3Name);
+            book.setFileImage4(fileImage4Name);
+
+            book.setTitle(title);
             book.setAuthor(author);
             book.setDescription(description);
             book.setPrice(price);
-            book.setSize((fileNumeric.getSize() /1000) + " Ko");
+            book.setIsPublished(false);
+            book.setSize((fileNumeric.getSize() / 1000) + " Ko");
             book.setPublishDate(LocalDateTime.now());
-            Files.copy(fileNumeric.getInputStream(), this.root.resolve(fileNumericName));
-            Files.copy(fileAudio.getInputStream(), this.root.resolve(fileAudioName));
-            Files.copy(fileVideo.getInputStream(), this.root.resolve(fileVideoName));
+
             return bookRepo.save(book);
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());

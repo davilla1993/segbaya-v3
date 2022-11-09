@@ -57,6 +57,10 @@ public class BookController {
                                                       @RequestParam MultipartFile fileNumeric,
                                                       @RequestParam MultipartFile fileAudio,
                                                       @RequestParam MultipartFile fileVideo,
+                                                      @RequestParam MultipartFile fileImage1,
+                                                      @RequestParam MultipartFile fileImage2,
+                                                      @RequestParam MultipartFile fileImage3,
+                                                      @RequestParam MultipartFile fileImage4,
                                                       @RequestParam String title,
                                                       @RequestParam String author,
                                                       @RequestParam String description,
@@ -64,7 +68,8 @@ public class BookController {
                                                       @RequestParam Long idCategory) {
         String message = "";
         try {
-            bookService.updateBook(bookId, title, author, description, price, idCategory, fileNumeric, fileAudio, fileVideo);
+            bookService.updateBook(bookId, title, author, description, price, idCategory, fileNumeric, fileAudio, fileVideo,
+                    fileImage1, fileImage2, fileImage3, fileImage4);
             message = "Books are uploaded successfully !";
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
