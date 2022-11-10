@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PublishHouseService {
     PublishHouse publishBook(PublishHouse publishHouse);
-    PublishHouse getPublishHouse(Long id);
+    PublishHouse getPublishHouseById(Long id);
     List<PublishHouse> getPublishHouses();
     PublishHouse savePublishHouse(PublishHouse publishHouse);
     void updatePublishHouse(Long id, PublishHouse publishHouse);

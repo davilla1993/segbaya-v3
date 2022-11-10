@@ -45,6 +45,11 @@ public class UserController {
     public ResponseEntity<String> login(@Parameter(description = "email password") @RequestBody String s){
         return ResponseEntity.ok("");
     }
+//    @PostMapping("/logout")
+//    public ResponseEntity<String> logout(@Parameter(description = "access token") @RequestBody String s){
+//        return ResponseEntity.ok("");
+//    }
+//
 
 
     @GetMapping("/user/find/{userId}")

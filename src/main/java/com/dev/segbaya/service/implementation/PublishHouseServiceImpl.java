@@ -28,7 +28,7 @@ public class PublishHouseServiceImpl implements PublishHouseService {
     }
 
     @Override
-    public PublishHouse getPublishHouse(Long id) {
+    public PublishHouse getPublishHouseById(Long id) {
         return publishHouseRepo.findById(id).orElseThrow(
                 (() -> new IllegalStateException(
                         "PublishHouse with id "+ id + " does not exist")

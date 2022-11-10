@@ -1,4 +1,4 @@
-package com.dev.segbaya.exception.filter;
+package com.dev.segbaya.filter;
 
 import com.dev.segbaya.domain.PublishHouse;
 import org.springframework.security.core.GrantedAuthority;

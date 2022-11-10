@@ -1,7 +1,7 @@
 package com.dev.segbaya.security;
 
-import com.dev.segbaya.exception.filter.CustomAuthenticationFilter;
-import com.dev.segbaya.exception.filter.CustomAuthorizationFilter;
+import com.dev.segbaya.filter.CustomAuthenticationFilter;
+import com.dev.segbaya.filter.CustomAuthorizationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

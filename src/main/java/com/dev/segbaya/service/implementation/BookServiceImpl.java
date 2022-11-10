@@ -3,9 +3,13 @@ package com.dev.segbaya.service.implementation;
 import com.dev.segbaya.controller.BookController;
 import com.dev.segbaya.domain.Book;
 import com.dev.segbaya.domain.Category;
+import com.dev.segbaya.domain.PublishHouse;
+import com.dev.segbaya.domain.User;
 import com.dev.segbaya.repo.BookRepo;
 import com.dev.segbaya.repo.CategoryRepo;
 import com.dev.segbaya.service.BookService;
+import com.dev.segbaya.service.PublishHouseService;
+import com.dev.segbaya.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.apache.commons.io.FilenameUtils;
@@ -33,6 +37,8 @@ public class BookServiceImpl implements BookService {
     private final Path root = Paths.get("uploads");
     private final BookRepo bookRepo;
     private final CategoryRepo categoryRepo;
+    private final UserService userService;
+    private final PublishHouseService publishHouseService;
 
     @Override
     public void init() {
@@ -47,7 +53,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book saveBook(String title, String author, String description, Double price, Long idCategory,
                          MultipartFile fileNumeric, MultipartFile fileAudio, MultipartFile fileVideo,
-                         MultipartFile fileImage1, MultipartFile fileImage2, MultipartFile fileImage3, MultipartFile fileImage4) {
+                         MultipartFile fileImage1, MultipartFile fileImage2, MultipartFile fileImage3, MultipartFile fileImage4,
+                         Long idUser, Long idPublishHouse) {
         Book book = new Book();
         try {
 
@@ -126,7 +133,15 @@ public class BookServiceImpl implements BookService {
             book.setAuthor(author);
             book.setDescription(description);
             book.setPrice(price);
+
             book.setIsPublished(false);
+
+            User user = userService.getUserById(idUser);
+            book.setUser(user);
+
+            PublishHouse publishHouse = publishHouseService.getPublishHouseById(idPublishHouse);
+            book.setPublishHouse(publishHouse);
+
             book.setSize((fileNumeric.getSize() / 1000) + " Ko");
             book.setPublishDate(LocalDateTime.now());
 
@@ -134,6 +149,16 @@ public class BookServiceImpl implements BookService {
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
+    }
+
+    @Transactional
+    @Override
+    public void publishBook(Long idBook) {
+
+        Book book = bookRepo.findById(idBook).orElseThrow((() -> new IllegalStateException(
+                "Book with id " + idBook + "does not exist")
+        ));
+        book.setIsPublished(true);
     }
 
     @Override
@@ -298,6 +323,46 @@ public class BookServiceImpl implements BookService {
         return bookRepo.findById(id).orElseThrow(
                 (() -> new IllegalStateException(
                         "Book with id "+ id + " does not exist")
+                )
+        );
+    }
+
+    @Override
+    public Book getBookByPublishHouseAndBook(Long idPublishHouse, Long idBook) {
+        PublishHouse publishHouse = publishHouseService.getPublishHouseById(idPublishHouse);
+        List<Book> books = bookRepo.findByPublishHouse(publishHouse).orElseThrow(
+                (() -> new IllegalStateException(
+                        "Book with PublishHouse " + publishHouse + " does not exist")
+                )
+        );
+        Book book = bookRepo.findById(idBook).orElseThrow(
+                (() -> new IllegalStateException(
+                        "Book with id "+ idBook + " does not exist")
+                )
+        );
+
+        if (books.contains(book)){
+            return book;
+        }
+        return null;
+    }
+
+    @Override
+    public List<Book> getBookByPublishHouse(Long idPublishHouse) {
+        PublishHouse publishHouse = publishHouseService.getPublishHouseById(idPublishHouse);
+        return bookRepo.findByPublishHouse(publishHouse).orElseThrow(
+                (() -> new IllegalStateException(
+                        "Book with PublishHouse "+ publishHouse + " does not exist")
+                )
+        );
+    }
+
+    @Override
+    public List<Book> getBookByUser(Long idUser) {
+        User user = userService.getUserById(idUser);
+        return bookRepo.findByUser(user).orElseThrow(
+                (() -> new IllegalStateException(
+                        "Book with User "+ user + " does not exist")
                 )
         );
     }

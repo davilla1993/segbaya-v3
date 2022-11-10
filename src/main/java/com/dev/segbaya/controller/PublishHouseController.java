@@ -19,13 +19,15 @@ public class PublishHouseController {
 
     @GetMapping("/find/{publishHouseId}")
     public ResponseEntity<PublishHouse> getPublishHouse(@PathVariable ("publishHouseId") Long publishHouseId){
-        return ResponseEntity.ok().body(publishHouseService.getPublishHouse(publishHouseId));
+        return ResponseEntity.ok().body(publishHouseService.getPublishHouseById(publishHouseId));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<PublishHouse>> getPublishHouses(){
         return ResponseEntity.ok().body(publishHouseService.getPublishHouses());
     }
+
+
 
     @PostMapping("/register")
     public ResponseEntity<PublishHouse> savePublishHouse(@RequestBody PublishHouse publishHouse){

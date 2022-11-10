@@ -22,7 +22,11 @@ public interface BookService {
                   MultipartFile fileImage1,
                   MultipartFile fileImage2,
                   MultipartFile fileImage3,
-                  MultipartFile fileImage4);
+                  MultipartFile fileImage4,
+                  Long idUser,
+                  Long idPublishHouse);
+
+    void publishBook(Long idBook);
 
     Book updateBook(Long idBook,
                     String title,
@@ -39,9 +43,6 @@ public interface BookService {
                   MultipartFile fileImage4);
 
 
-
-
-
     Category saveCategory(Category category);
 
     Category updateCategory(Long id, Category category);
@@ -53,6 +54,12 @@ public interface BookService {
     List<Book> getBooks();
 
     Book getBook(Long id);
+
+    Book getBookByPublishHouseAndBook(Long idPublishHouse, Long idBook);
+
+    List<Book> getBookByPublishHouse(Long idPublishHouse);
+
+    List<Book> getBookByUser(Long idUser);
 
     public Stream<Path> loadAll();
 

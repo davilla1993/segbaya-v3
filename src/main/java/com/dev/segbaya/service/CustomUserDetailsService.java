@@ -1,7 +1,7 @@
 package com.dev.segbaya.service;
 
 import com.dev.segbaya.domain.PublishHouse;
-import com.dev.segbaya.exception.filter.CustomUserDetails;
+import com.dev.segbaya.filter.CustomUserDetails;
 import com.dev.segbaya.repo.PublishHouseRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

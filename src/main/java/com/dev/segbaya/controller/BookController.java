@@ -39,17 +39,25 @@ public class BookController {
                                                       @RequestParam String author,
                                                       @RequestParam String description,
                                                       @RequestParam Double price,
-                                                      @RequestParam Long idCategory) {
+                                                      @RequestParam Long idCategory,
+                                                      @RequestParam Long idUser,
+                                                      @RequestParam Long idPublishHouse) {
         String message = "";
         try {
             bookService.saveBook(title, author, description, price, idCategory, fileNumeric, fileAudio, fileVideo,
-                    fileImage1, fileImage2, fileImage3, fileImage4);
+                    fileImage1, fileImage2, fileImage3, fileImage4, idUser, idPublishHouse);
             message = "Books are uploaded successfully !";
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         } catch (Exception e) {
             message = "Could not upload the books !\n"+e.getMessage() ;
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
+    }
+
+    @PostMapping("/book/publish/{bookId}")
+    public ResponseEntity<String> publishBook(@PathVariable Long bookId){
+        bookService.publishBook(bookId);
+        return ResponseEntity.ok().body("Published successfully");
     }
 
     @PutMapping("/book/update/{bookId}")
@@ -94,6 +102,7 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(pathStreams);
     }
 
+
     @GetMapping("/books/{bookName:.+}")
     @ResponseBody
     public ResponseEntity<Resource> getFile(@PathVariable String bookName) {
@@ -105,6 +114,16 @@ public class BookController {
     @GetMapping("/book/find/{bookId}")
     public ResponseEntity<Book> getBook(@PathVariable ("bookId") Long bookId){
         return ResponseEntity.ok().body(bookService.getBook(bookId));
+    }
+
+    @GetMapping("/book/findByPublishHouse/{publishHouseId}")
+    public ResponseEntity<List<Book>> getBookByPublishHouse(@PathVariable ("publishHouseId") Long publishHouseId){
+        return ResponseEntity.ok().body(bookService.getBookByPublishHouse(publishHouseId));
+    }
+
+    @GetMapping("/book/findByUser/{userId}")
+    public ResponseEntity<List<Book>> getBookByUser(@PathVariable ("userId") Long userId){
+        return ResponseEntity.ok().body(bookService.getBookByUser(userId));
     }
 
     @DeleteMapping("/book/delete/{bookId}")
