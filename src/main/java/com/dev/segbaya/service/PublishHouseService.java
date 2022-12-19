@@ -9,6 +9,6 @@ public interface PublishHouseService {
     PublishHouse getPublishHouseById(Long id);
     List<PublishHouse> getPublishHouses();
     PublishHouse savePublishHouse(PublishHouse publishHouse);
-    void updatePublishHouse(Long id, PublishHouse publishHouse);
+    PublishHouse updatePublishHouse(Long id, PublishHouse publishHouse);
     void deletePublishHouse(Long id);
 }

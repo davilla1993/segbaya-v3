@@ -1,5 +1,6 @@
 package com.dev.segbaya.service.implementation;
 
+import com.dev.segbaya.controller.BookController;
 import com.dev.segbaya.domain.Role;
 import com.dev.segbaya.domain.User;
 import com.dev.segbaya.repo.RoleRepo;
@@ -7,6 +8,7 @@ import com.dev.segbaya.repo.UserRepo;
 import com.dev.segbaya.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +16,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -23,6 +30,7 @@ import java.util.*;
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
 
+    private final Path root = Paths.get("uploads");
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
     private final PasswordEncoder passwordEncoder;
@@ -32,21 +40,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepo.findByEmail(email).orElseThrow(
                 (() -> new IllegalStateException(
-                        "User with email "+ email + " does not exist")
+                        "User with email " + email + " does not exist")
                 ));
         if (user == null) {
             log.error("User not found in the database");
             throw new UsernameNotFoundException("User not found in the database");
-        }else {
-            log.info("User found in the database: {}", email);
+        } else {
+            log.info("User found in the database: {}" , email);
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
         user.getRoles().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         });
         return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
+                user.getEmail() ,
+                user.getPassword() ,
                 authorities);
     }
 
@@ -54,7 +62,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User getUserById(Long id) {
         return userRepo.findById(id).orElseThrow(
                 (() -> new IllegalStateException(
-                        "User with id "+ id + " does not exist")
+                        "User with id " + id + " does not exist")
                 ));
     }
 
@@ -62,7 +70,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User getUserByEmail(String email) {
         return userRepo.findByEmail(email).orElseThrow(
                 (() -> new IllegalStateException(
-                        "User with id "+ email + " does not exist")
+                        "User with id " + email + " does not exist")
                 ));
     }
 
@@ -72,30 +80,60 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepo.findAll();
     }
 
-
+    @Transactional
     @Override
-    public void saveUser(User user) {
+    public User saveUser(
+                         String firstName ,
+                         String lastName ,
+                         String email ,
+                         String password ,
+                         MultipartFile filePhoto) {
+
         Optional<User> userOptional = userRepo.
-                findByEmail(user.getEmail());
+                findByEmail(email);
 
-        if (userOptional.isPresent()){
-            throw new IllegalStateException("email "+ user.getEmail() + "already taken");
+        if (userOptional.isPresent()) {
+            throw new IllegalStateException("email " + email + "already taken");
         }
+        User user = new User();
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepo.save(user);
-        addRoleToUser(user.getEmail(), "ROLE_USER");
+        try {
+            String filePhotoName = null;
+
+            if (!filePhoto.isEmpty()) {
+                filePhotoName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(filePhoto.getOriginalFilename());
+                user.setUrlPhoto(MvcUriComponentsBuilder
+                        .fromMethodName(BookController.class , "getFile" , filePhotoName.toString()).build().toString());
+                Files.copy(filePhoto.getInputStream() , this.root.resolve(filePhotoName));
+            }
+
+            user.setFilePhotoName(filePhotoName);
+
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            user.setPassword(passwordEncoder.encode(password));
+
+            userRepo.save(user);
+            addRoleToUser(user.getEmail() , "ROLE_USER");
+            if (user.getEmail().equals("admin@gmail.com")) {
+                addRoleToUser(user.getEmail() , "ROLE_ADMIN");
+            }
+            return user;
+        } catch (Exception e) {
+            throw new RuntimeException("Could not store the photo file. Error: " + e.getMessage());
+        }
     }
 
     @Transactional
     @Override
-    public void updateUser(Long id, User user) {
+    public void updateUser(Long id , User user) {
         User userOptional = userRepo.findById(id).orElseThrow(
                 (() -> new IllegalStateException(
-                        "User with id "+ id + " does not exist")
+                        "User with id " + id + " does not exist")
                 ));
         if (user.getFirstName() != null &&
-                user.getFirstName().length() > 0 ) {
+                user.getFirstName().length() > 0) {
             userOptional.setFirstName(user.getFirstName());
         }
 
@@ -105,14 +143,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         if (user.getPassword() != null &&
-                user.getPassword().length() > 0 ) {
+                user.getPassword().length() > 0) {
             userOptional.setPassword(passwordEncoder.encode(user.getPassword()));
         }
 
-        if (userOptional.getImage() != null &&
-                userOptional.getImage().length() > 0 ) {
-            userOptional.setImage(user.getImage());
-        }
+//        if (userOptional.getImage() != null &&
+//                userOptional.getImage().length() > 0) {
+//            userOptional.setImage(user.getImage());
+//        }
 
     }
 
@@ -120,7 +158,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void deleteUser(Long id) {
         User user = userRepo.findById(id).orElseThrow(
                 (() -> new IllegalStateException(
-                        "User with id "+ id + " does not exist")
+                        "User with id " + id + " does not exist")
                 ));
         userRepo.deleteById(user.getIdUser());
     }
@@ -130,20 +168,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Optional<Role> roleOptional = roleRepo.findByName(role.getName());
 
         if (roleOptional.isPresent()) {
-            throw new IllegalStateException("Role "+ role.getName() + " already add");
+            throw new IllegalStateException("Role " + role.getName() + " already add");
         }
         return roleRepo.save(role);
     }
 
     @Override
-    public void addRoleToUser(String email, String roleName) {
+    public void addRoleToUser(String email , String roleName) {
         User user = userRepo.findByEmail(email).orElseThrow(
                 (() -> new IllegalStateException(
-                        "User with email "+ email + " does not exist")
+                        "User with email " + email + " does not exist")
                 ));
         Role role = roleRepo.findByName(roleName).orElseThrow(
                 (() -> new IllegalStateException(
-                        "Role "+ roleName + " does not exist")
+                        "Role " + roleName + " does not exist")
                 ));
 
         if (!user.getRoles().contains(role)) {
