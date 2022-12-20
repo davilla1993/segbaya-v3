@@ -37,10 +37,10 @@ public class PublishHouseController {
     }
 
     @PutMapping("/update/{publishHouseId}")
-    public ResponseEntity<?> updatePublishHouse(@PathVariable ("publishHouseId") Long publishHouseId,
+    public ResponseEntity<PublishHouse> updatePublishHouse(@PathVariable ("publishHouseId") Long publishHouseId,
                                                 @RequestBody PublishHouse publishHouse){
         publishHouseService.updatePublishHouse(publishHouseId, publishHouse);
-        return ResponseEntity.ok().body("Updated successfully !");
+        return ResponseEntity.ok().body( publishHouseService.updatePublishHouse(publishHouseId, publishHouse));
     }
 
     @DeleteMapping("/delete/{publishHouseId}")

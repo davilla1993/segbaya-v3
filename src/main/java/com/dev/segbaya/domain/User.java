@@ -26,7 +26,11 @@ public class User {
     private String email;
     private String password;
 
-    private String image;
+//    private String publishHouseName;
+
+    private String filePhotoName;
+    private String urlPhoto;
+
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany
     private Collection<Role> roles = new ArrayList<>();
@@ -46,7 +50,7 @@ public class User {
     @LastModifiedBy
     private Instant updatedAt;
 
-    public User(String firstName, String lastName, String email, String password) {
+    public User(String firstName , String lastName , String email , String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

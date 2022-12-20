@@ -54,7 +54,7 @@ public class PublishHouseServiceImpl implements PublishHouseService {
 
     @Transactional
     @Override
-    public void updatePublishHouse(Long id, PublishHouse publishHouse) {
+    public PublishHouse updatePublishHouse(Long id, PublishHouse publishHouse) {
         PublishHouse publishHouseOptional = publishHouseRepo.findById(id).orElseThrow(
                 (() -> new IllegalStateException(
                         "PublishHouse with id "+ id + " does not exist")
@@ -89,6 +89,7 @@ public class PublishHouseServiceImpl implements PublishHouseService {
                 publishHouse.getWebsite().length() > 0 ) {
             publishHouseOptional.setWebsite(publishHouse.getWebsite());
         }
+        return  publishHouse;
     }
 
     @Override

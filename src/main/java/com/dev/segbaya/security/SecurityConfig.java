@@ -2,6 +2,7 @@ package com.dev.segbaya.security;
 
 import com.dev.segbaya.filter.CustomAuthenticationFilter;
 import com.dev.segbaya.filter.CustomAuthorizationFilter;
+import com.dev.segbaya.service.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/logout/**",
                         "/api/book/all/**",
                         "/api/publish-house/all/**",
+                        "/api/publish-house/register/**",
                         "/api-docs/**",
                         "/configuration/ui",
                         "/configuration/security",
