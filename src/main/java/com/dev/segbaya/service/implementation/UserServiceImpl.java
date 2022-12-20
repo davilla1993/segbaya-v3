@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User getUserByEmail(String email) {
         return userRepo.findByEmail(email).orElseThrow(
                 (() -> new IllegalStateException(
-                        "User with id " + email + " does not exist")
+                        "User with email " + email + " does not exist")
                 ));
     }
 
