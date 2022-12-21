@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,13 +35,14 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 @AllArgsConstructor
 public class UserController {
 
+    @Autowired
     private final UserService userService;
-    private final RoleRepo roleRepo;
 
     @Operation(description = "")
     @PostMapping("/login")
@@ -49,9 +51,14 @@ public class UserController {
     }
 
 
-    @GetMapping("/user/find/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable("userId") Long userId) {
+    @GetMapping("/user/findById/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId) {
         return ResponseEntity.ok().body(userService.getUserById(userId));
+    }
+
+    @GetMapping("/user/findByEmail/{userEmail}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable("userEmail") String userEmail) {
+        return ResponseEntity.ok().body(userService.getUserByEmail(userEmail));
     }
 
     @GetMapping("/user/all")
@@ -82,8 +89,12 @@ public class UserController {
 
             if (matcher.find()) {
                 if (matcher2.find()) {
-                    userService.saveUser(firstName , lastName , email , password , filePhoto);
-                    return ResponseEntity.created(uri).body("Created successfully !");
+                    User user = userService.saveUser(firstName , lastName , email , password , filePhoto);
+                    Map userInfo = new HashMap<>();
+                    userInfo.put("status", 201);
+                    userInfo.put("message", "created successfully");
+                    userInfo.put("user", user);
+                    return ResponseEntity.created(uri).body(userInfo);
                 } else {
                     return ResponseEntity.created(uri).body("Password must contain between 6 and 12 characters.");
                 }

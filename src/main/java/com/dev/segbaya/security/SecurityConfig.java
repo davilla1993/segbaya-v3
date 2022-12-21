@@ -38,7 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/api/login/**",
                         "/api/token/refresh/**",
                         "/api/user/register/**",
-                        "/api/user/all/**",
                         "/logout/**",
                         "/api/book/all/**",
                         "/api/publish-house/all/**",
@@ -51,7 +50,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui/**",
                         "/swagger-ui.html")
                 .permitAll();
-        http.authorizeRequests().antMatchers("/api/user/**").hasAnyAuthority("ROLE_USER");
+
+        http.authorizeRequests().antMatchers(
+                "/api/user/**",
+                        "/api/user/all/**",
+                        "/api/user/findById/**",
+                        "/api/user/findByEmail/**")
+                .hasAnyAuthority("ROLE_USER");
+
         http.authorizeRequests().antMatchers("/api/cart/**").hasAnyAuthority("ROLE_USER");
 //        http.authorizeRequests().antMatchers("/api/publish-house/**").hasAnyAuthority("ROLE_PUBLISH_HOUSE");
         http.authorizeRequests().antMatchers("/api/**", "/api/role/**").hasAnyAuthority("ROLE_ADMIN");
